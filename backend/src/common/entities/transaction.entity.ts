@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Person } from "./person.entity";
 import { Bank } from "./bank.entity";
+import { Person } from "./person.entity";
 
 export enum TransactionStatus {
   PROCESSING = "PROCESSING",
@@ -13,11 +13,11 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: "person_id" })
-  personId: number;
+  @Column({ name: "person_id", nullable: true })
+  personId: number | null;
 
-  @Column({ name: "bank_id" })
-  bankId: number;
+  @Column({ name: "bank_id", nullable: true })
+  bankId: number | null;
 
   @Column({
     type: "numeric",
@@ -42,11 +42,11 @@ export class Transaction {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Person)
+  @ManyToOne(() => Person, { nullable: true })
   @JoinColumn({ name: "person_id" })
-  person: Person;
+  person: Person | null;
 
-  @ManyToOne(() => Bank)
+  @ManyToOne(() => Bank, { nullable: true })
   @JoinColumn({ name: "bank_id" })
-  bank: Bank;
+  bank: Bank | null;
 }

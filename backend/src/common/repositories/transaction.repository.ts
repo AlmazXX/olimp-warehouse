@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
+import { TransactionDto } from "src/api/transaction/dto/create-transactions-bulk.dto";
+import { AppConfig } from "src/setup/config/config.schema";
 import { QueryFailedError, Repository } from "typeorm";
-import { TransactionDto } from "../../api/transaction/dto/create-transactions-bulk.dto";
-import { AppConfig } from "../../setup/config/config.schema";
 import { Transaction, TransactionStatus } from "../entities/transaction.entity";
 
 @Injectable()
@@ -18,10 +18,17 @@ export class TransactionRepository {
     return this.transactionRepo.findOne({ where: { key } });
   }
 
-  create(dto: TransactionDto & { status: TransactionStatus; errorMessage?: string }) {
+  create(
+    dto: Omit<TransactionDto, "personId" | "bankId"> & {
+      status: TransactionStatus;
+      personId?: number | null;
+      bankId?: number | null;
+      errorMessage?: string;
+    },
+  ) {
     const transaction = this.transactionRepo.create({
-      personId: dto.personId,
-      bankId: dto.bankId,
+      personId: dto.personId ?? null,
+      bankId: dto.bankId ?? null,
       amount: dto.amount,
       status: dto.status,
       key: dto.key,
@@ -67,12 +74,32 @@ export class TransactionRepository {
     }
   }
 
+  async createFailedOrExisting(
+    dto: Omit<TransactionDto, "personId" | "bankId"> & {
+      personId?: number | null;
+      bankId?: number | null;
+      errorMessage: string;
+    },
+  ) {
+    const existing = await this.findByKey(dto.key);
+    if (existing) return existing;
+
+    try {
+      return await this.create({ ...dto, status: TransactionStatus.FAILED });
+    } catch (error) {
+      if (this.isUniqueViolation(error)) {
+        const existing = await this.findByKey(dto.key);
+        if (existing) return existing;
+      }
+      throw error;
+    }
+  }
+
   async updateStatus(id: number, status: TransactionStatus, errorMessage?: string) {
-    const { affected } = await this.transactionRepo.update(id, {
+    await this.transactionRepo.update(id, {
       status,
       ...(errorMessage && { errorMessage }),
     });
-    return (affected ?? 0) > 0;
   }
 
   private isUniqueViolation(error: unknown): boolean {

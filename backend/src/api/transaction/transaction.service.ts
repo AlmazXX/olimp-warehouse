@@ -1,10 +1,11 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Bank } from "src/common/entities/bank.entity";
+import { Transaction, TransactionStatus } from "src/common/entities/transaction.entity";
+import { BankRepository } from "src/common/repositories/bank.repository";
+import { PersonRepository } from "src/common/repositories/person.repository";
+import { TransactionRepository } from "src/common/repositories/transaction.repository";
+import { sleep } from "src/common/utils/sleep.util";
 import { DataSource } from "typeorm";
-import { Bank } from "../../common/entities/bank.entity";
-import { Transaction, TransactionStatus } from "../../common/entities/transaction.entity";
-import { PersonRepository } from "../../common/repositories/person.repository";
-import { TransactionRepository } from "../../common/repositories/transaction.repository";
-import { sleep } from "../../common/utils/sleep.util";
 import { ProcessTransactionsBulkDto, TransactionDto } from "./dto/create-transactions-bulk.dto";
 
 const getTransactionErrorMessage = (transaction: Pick<Transaction, "errorMessage">): string | null => {
@@ -20,6 +21,7 @@ export class TransactionService {
     private readonly datasource: DataSource,
     private readonly transactionRepository: TransactionRepository,
     private readonly personRepository: PersonRepository,
+    private readonly bankRepository: BankRepository,
   ) {}
 
   async processTransactionsBulk({ transactions }: ProcessTransactionsBulkDto) {
@@ -55,14 +57,34 @@ export class TransactionService {
   }
 
   async processTransaction(dto: TransactionDto): Promise<Transaction> {
-    const person = await this.personRepository.findById(dto.personId);
-    if (!person) {
-      const { transaction } = await this.transactionRepository.findOrCreate({
+    const [person, bank] = await Promise.all([
+      this.personRepository.findById(dto.personId),
+      this.bankRepository.findById(dto.bankId),
+    ]);
+
+    if (!person && !bank) {
+      return this.transactionRepository.createFailedOrExisting({
         ...dto,
-        status: TransactionStatus.FAILED,
+        personId: null,
+        bankId: null,
+        errorMessage: `Person ${dto.personId} and bank ${dto.bankId} not found`,
+      });
+    }
+
+    if (!person) {
+      return this.transactionRepository.createFailedOrExisting({
+        ...dto,
+        personId: null,
         errorMessage: `Person ${dto.personId} not found`,
       });
-      return transaction;
+    }
+
+    if (!bank) {
+      return this.transactionRepository.createFailedOrExisting({
+        ...dto,
+        bankId: null,
+        errorMessage: `Bank ${dto.bankId} not found`,
+      });
     }
 
     const { transaction, isNew } = await this.transactionRepository.findOrCreate({
@@ -70,7 +92,7 @@ export class TransactionService {
       status: TransactionStatus.PROCESSING,
     });
 
-    if (!isNew) return transaction; // возможна транзакция в статусе processing
+    if (!isNew) return transaction;
 
     await this.datasource
       .transaction(async (em) => {
@@ -97,7 +119,7 @@ export class TransactionService {
   }
 
   async updateStatusWithRetries(id: number, status: TransactionStatus, errorMessage?: string, retries: number = 3) {
-    for (let attempt = 1; attempt < retries; attempt++) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         await this.transactionRepository.updateStatus(id, status, errorMessage);
         return;
@@ -105,8 +127,7 @@ export class TransactionService {
         this.logger.error(`Failed to update transaction ${id}. Attempt ${attempt}/${retries}`, error);
 
         if (attempt === retries) {
-          this.logger.error(`Giving up on transaction ${id} - will be caught by PROCESSING timeout recovery`);
-          return;
+          return this.logger.error(`Giving up on transaction ${id} - will be caught by PROCESSING timeout recovery`);
         }
 
         await sleep(100 * attempt);
