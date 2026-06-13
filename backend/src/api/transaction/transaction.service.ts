@@ -1,12 +1,24 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Bank } from "src/common/entities/bank.entity";
 import { Transaction, TransactionStatus } from "src/common/entities/transaction.entity";
 import { BankRepository } from "src/common/repositories/bank.repository";
 import { PersonRepository } from "src/common/repositories/person.repository";
 import { TransactionRepository } from "src/common/repositories/transaction.repository";
+import { runWithConcurrency } from "src/common/utils/concurrency.util";
 import { sleep } from "src/common/utils/sleep.util";
+import { AppConfig } from "src/setup/config/config.schema";
 import { DataSource } from "typeorm";
 import { ProcessTransactionsBulkDto, TransactionDto } from "./dto/create-transactions-bulk.dto";
+
+export interface TransactionResult {
+  transactionId: number | null;
+  key: string;
+  personId: number;
+  amount: number;
+  status: TransactionStatus;
+  errorMessage: string | null;
+}
 
 const getTransactionErrorMessage = (transaction: Pick<Transaction, "errorMessage">): string | null => {
   const { errorMessage } = transaction;
@@ -22,38 +34,24 @@ export class TransactionService {
     private readonly transactionRepository: TransactionRepository,
     private readonly personRepository: PersonRepository,
     private readonly bankRepository: BankRepository,
+    private readonly config: ConfigService<AppConfig, true>,
   ) {}
 
   async processTransactionsBulk({ transactions }: ProcessTransactionsBulkDto) {
-    const results = await Promise.allSettled(
-      transactions.sort((a, b) => a.bankId - b.bankId).map((t) => this.processTransaction(t)),
-    );
+    const concurrencyLimit = this.config.get("transactions.concurrencyLimit", { infer: true });
+    const ordered = transactions
+      .map((dto, originalIndex) => ({ dto, originalIndex }))
+      .sort((a, b) => a.dto.bankId - b.dto.bankId);
 
-    return results.map((r, i) => {
-      const dto = transactions[i];
+    const settled = await runWithConcurrency(ordered, concurrencyLimit, ({ dto }) => this.processTransaction(dto));
+    const response = new Array<TransactionResult>(transactions.length);
 
-      if (r.status === "fulfilled") {
-        const transaction = r.value;
-
-        return {
-          transactionId: transaction.id,
-          key: dto.key,
-          personId: dto.personId,
-          amount: dto.amount,
-          status: transaction.status,
-          errorMessage: getTransactionErrorMessage(transaction),
-        };
-      }
-
-      return {
-        transactionId: null,
-        key: dto.key,
-        personId: dto.personId,
-        amount: dto.amount,
-        status: TransactionStatus.FAILED,
-        errorMessage: r.reason instanceof Error ? r.reason.message : "Unknown error",
-      };
+    settled.forEach((result, i) => {
+      const { dto, originalIndex } = ordered[i];
+      response[originalIndex] = this.toResult(result, dto);
     });
+
+    return response;
   }
 
   async processTransaction(dto: TransactionDto): Promise<Transaction> {
@@ -124,7 +122,12 @@ export class TransactionService {
     return transaction;
   }
 
-  async updateStatusWithRetries(id: number, status: TransactionStatus, errorMessage?: string, retries: number = 3) {
+  private async updateStatusWithRetries(
+    id: number,
+    status: TransactionStatus,
+    errorMessage?: string,
+    retries: number = 3,
+  ) {
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         await this.transactionRepository.updateStatus(id, status, errorMessage);
@@ -139,5 +142,28 @@ export class TransactionService {
         await sleep(100 * attempt);
       }
     }
+  }
+
+  private toResult(result: PromiseSettledResult<Transaction>, dto: TransactionDto): TransactionResult {
+    if (result.status === "fulfilled") {
+      const transaction = result.value;
+      return {
+        transactionId: transaction.id,
+        key: dto.key,
+        personId: dto.personId,
+        amount: dto.amount,
+        status: transaction.status,
+        errorMessage: getTransactionErrorMessage(transaction),
+      };
+    }
+
+    return {
+      transactionId: null,
+      key: dto.key,
+      personId: dto.personId,
+      amount: dto.amount,
+      status: TransactionStatus.FAILED,
+      errorMessage: result.reason instanceof Error ? result.reason.message : "Unknown error",
+    };
   }
 }

@@ -15,4 +15,5 @@ export default new DataSource({
   username: config.postgres.user,
   password: config.postgres.password,
   entities: [...typeormEntities],
+  extra: { max: config.postgres.poolMax },
 });

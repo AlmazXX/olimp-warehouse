@@ -7,10 +7,12 @@ const envSchema = z.object({
   POSTGRES_DB: z.string().min(1),
   POSTGRES_USER: z.string().min(1),
   POSTGRES_PASSWORD: z.string().min(1),
+  POSTGRES_POOL_MAX: z.coerce.number().int().min(1).default(20),
   TRANSACTION_PROCESSING_TIMEOUT_MS: z.coerce
     .number()
     .min(1)
     .default(30 * 60 * 1000),
+  TRANSACTION_CONCURRENCY_LIMIT: z.coerce.number().int().min(1).default(10),
 });
 
 const configSchema = envSchema.transform((env) => ({
@@ -21,9 +23,11 @@ const configSchema = envSchema.transform((env) => ({
     user: env.POSTGRES_USER,
     password: env.POSTGRES_PASSWORD,
     db: env.POSTGRES_DB,
+    poolMax: env.POSTGRES_POOL_MAX,
   },
   transactions: {
     processingTimeoutMs: env.TRANSACTION_PROCESSING_TIMEOUT_MS,
+    concurrencyLimit: env.TRANSACTION_CONCURRENCY_LIMIT,
   },
 }));
 
