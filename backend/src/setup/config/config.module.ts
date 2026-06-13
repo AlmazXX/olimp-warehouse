@@ -8,5 +8,6 @@ import { loadConfig } from "./config.schema";
       validate: loadConfig,
     }),
   ],
+  exports: [NestConfigModule],
 })
 export class ConfigModule {}
