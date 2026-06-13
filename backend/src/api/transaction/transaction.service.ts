@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Bank } from "src/common/entities/bank.entity";
 import { Transaction, TransactionStatus } from "src/common/entities/transaction.entity";
 import { BankRepository } from "src/common/repositories/bank.repository";
@@ -94,25 +94,31 @@ export class TransactionService {
 
     if (!isNew) return transaction;
 
-    await this.datasource
-      .transaction(async (em) => {
+    try {
+      await this.datasource.transaction(async (em) => {
         const result = await em
           .createQueryBuilder()
           .update(Bank)
           .set({ balance: () => "balance + :amount" })
           .setParameter("amount", transaction.amount)
           .where("id = :id", { id: dto.bankId })
+          .andWhere("balance + :amount >= 0", { amount: transaction.amount })
           .execute();
 
-        if (result.affected === 0) throw new NotFoundException(`Bank ${dto.bankId} not found`);
+        if (result.affected === 0) {
+          const bankExists = await em.existsBy(Bank, { id: dto.bankId });
+          if (bankExists) throw new Error(`Insufficient bank funds: balance for bank ${dto.bankId} cannot go below 0`);
+
+          throw new Error(`Bank ${dto.bankId} not found`);
+        }
 
         await em.update(Transaction, transaction.id, { status: TransactionStatus.SUCCESS });
-      })
-      .catch(async (error) => {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        await this.updateStatusWithRetries(transaction.id, TransactionStatus.FAILED, errorMessage);
-        throw error;
       });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      await this.updateStatusWithRetries(transaction.id, TransactionStatus.FAILED, errorMessage);
+      throw error;
+    }
 
     transaction.status = TransactionStatus.SUCCESS;
     return transaction;
