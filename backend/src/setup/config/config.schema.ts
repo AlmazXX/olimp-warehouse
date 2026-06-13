@@ -7,6 +7,10 @@ const envSchema = z.object({
   POSTGRES_DB: z.string().min(1),
   POSTGRES_USER: z.string().min(1),
   POSTGRES_PASSWORD: z.string().min(1),
+  TRANSACTION_PROCESSING_TIMEOUT_MS: z.coerce
+    .number()
+    .min(1)
+    .default(30 * 60 * 1000),
 });
 
 const configSchema = envSchema.transform((env) => ({
@@ -17,6 +21,9 @@ const configSchema = envSchema.transform((env) => ({
     user: env.POSTGRES_USER,
     password: env.POSTGRES_PASSWORD,
     db: env.POSTGRES_DB,
+  },
+  transactions: {
+    processingTimeoutMs: env.TRANSACTION_PROCESSING_TIMEOUT_MS,
   },
 }));
 
