@@ -1,3 +1,4 @@
+import { performance } from "node:perf_hooks";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Bank } from "src/common/entities/bank.entity";
@@ -43,6 +44,7 @@ export class TransactionService {
   }
 
   async processTransactionsBulk({ transactions }: ProcessTransactionsBulkDto) {
+    const start = performance.now();
     const concurrencyLimit = this.config.get("transactions.concurrencyLimit", { infer: true });
     const ordered = transactions
       .map((dto, originalIndex) => ({ dto, originalIndex }))
@@ -56,7 +58,7 @@ export class TransactionService {
       response[originalIndex] = this.toResult(result, dto);
     });
 
-    return response;
+    return { transactions: response, processingTimeMs: Math.round(performance.now() - start) };
   }
 
   async processTransaction(dto: TransactionDto): Promise<Transaction> {
