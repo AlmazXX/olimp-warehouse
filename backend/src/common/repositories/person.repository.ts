@@ -13,4 +13,8 @@ export class PersonRepository {
   async findById(id: number): Promise<Person | null> {
     return this.personRepo.findOne({ where: { id } });
   }
+
+  async find({ page, limit }: { page: number; limit: number }) {
+    return this.personRepo.find({ skip: (page - 1) * limit, take: limit });
+  }
 }
