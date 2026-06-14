@@ -11,8 +11,9 @@ const envSchema = z.object({
   TRANSACTION_PROCESSING_TIMEOUT_MS: z.coerce
     .number()
     .min(1)
-    .default(30 * 60 * 1000),
+    .default(30 * 1000),
   TRANSACTION_CONCURRENCY_LIMIT: z.coerce.number().int().min(1).default(10),
+  CORS_ORIGIN: z.string().min(1).default("http://localhost:3000"),
 });
 
 const configSchema = envSchema.transform((env) => ({
@@ -28,6 +29,9 @@ const configSchema = envSchema.transform((env) => ({
   transactions: {
     processingTimeoutMs: env.TRANSACTION_PROCESSING_TIMEOUT_MS,
     concurrencyLimit: env.TRANSACTION_CONCURRENCY_LIMIT,
+  },
+  cors: {
+    origin: env.CORS_ORIGIN,
   },
 }));
 

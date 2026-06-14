@@ -6,8 +6,11 @@ import { AppConfig } from "./setup/config/config.schema";
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
-  const port = app.get(ConfigService<AppConfig, true>).get("port", 8000, { infer: true });
+  const config = app.get(ConfigService<AppConfig, true>);
+  const port = config.get("port", 8000, { infer: true });
+  const corsOrigin = config.get("cors.origin", { infer: true });
 
+  app.enableCors({ origin: corsOrigin });
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: VERSION_NEUTRAL });
   app.enableShutdownHooks();
 
