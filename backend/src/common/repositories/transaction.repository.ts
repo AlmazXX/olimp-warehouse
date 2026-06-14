@@ -14,6 +14,10 @@ export class TransactionRepository {
     private readonly config: ConfigService<AppConfig, true>,
   ) {}
 
+  async find({ page, limit }: { page: number; limit: number }) {
+    return this.transactionRepo.find({ skip: (page - 1) * limit, take: limit, order: { createdAt: "DESC" } });
+  }
+
   async findByKey(key: string): Promise<Transaction | null> {
     return this.transactionRepo.findOne({ where: { key } });
   }

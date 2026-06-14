@@ -9,6 +9,7 @@ import { runWithConcurrency } from "src/common/utils/concurrency.util";
 import { sleep } from "src/common/utils/sleep.util";
 import { AppConfig } from "src/setup/config/config.schema";
 import { DataSource } from "typeorm";
+import { GetTransactionsDto, GetTransactionsResponseDto } from "./dto/get-transactions.dto";
 import { ProcessTransactionsBulkDto, TransactionDto } from "./dto/transaction.dto";
 
 export interface TransactionResult {
@@ -36,6 +37,10 @@ export class TransactionService {
     private readonly bankRepository: BankRepository,
     private readonly config: ConfigService<AppConfig, true>,
   ) {}
+
+  async get(pagination: GetTransactionsDto) {
+    return this.transactionRepository.find(pagination).then((res) => res.map((t) => new GetTransactionsResponseDto(t)));
+  }
 
   async processTransactionsBulk({ transactions }: ProcessTransactionsBulkDto) {
     const concurrencyLimit = this.config.get("transactions.concurrencyLimit", { infer: true });
