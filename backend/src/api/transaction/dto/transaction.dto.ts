@@ -30,7 +30,7 @@ export class TransactionDto {
 
 export class ProcessTransactionsBulkDto {
   @ArrayNotEmpty()
-  @ArrayMaxSize(1)
+  @ArrayMaxSize(100)
   @ValidateNested({ each: true })
   @Type(() => TransactionDto)
   transactions: TransactionDto[];
