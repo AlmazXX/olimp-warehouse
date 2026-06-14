@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { ProcessTransactionsBulkDto } from "./dto/create-transactions-bulk.dto";
+import { ProcessTransactionsBulkDto } from "./dto/transaction.dto";
 import { TransactionService } from "./transaction.service";
 
 @Controller({ path: "transactions", version: "1" })

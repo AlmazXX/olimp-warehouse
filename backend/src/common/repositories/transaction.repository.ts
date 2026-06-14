@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { TransactionDto } from "src/api/transaction/dto/create-transactions-bulk.dto";
+import { TransactionDto } from "src/api/transaction/dto/transaction.dto";
 import { AppConfig } from "src/setup/config/config.schema";
 import { QueryFailedError, Repository } from "typeorm";
 import { Transaction, TransactionStatus } from "../entities/transaction.entity";

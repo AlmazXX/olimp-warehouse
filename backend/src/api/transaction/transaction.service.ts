@@ -9,7 +9,7 @@ import { runWithConcurrency } from "src/common/utils/concurrency.util";
 import { sleep } from "src/common/utils/sleep.util";
 import { AppConfig } from "src/setup/config/config.schema";
 import { DataSource } from "typeorm";
-import { ProcessTransactionsBulkDto, TransactionDto } from "./dto/create-transactions-bulk.dto";
+import { ProcessTransactionsBulkDto, TransactionDto } from "./dto/transaction.dto";
 
 export interface TransactionResult {
   transactionId: number | null;
