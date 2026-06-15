@@ -8,6 +8,7 @@
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "format": "pnpm -r format",
-    "start:backend": "pnpm --filter @olipm/backend start:dev"
+    "start:backend": "pnpm --filter @olipm/backend start:dev",
+    "start:frontend": "pnpm --filter @olipm/frontend dev"
   }
 }
