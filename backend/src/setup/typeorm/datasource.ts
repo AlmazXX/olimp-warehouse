@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { typeormEntities } from "src/common/entities";
 import { DataSource } from "typeorm";
 import { loadConfig } from "../config/config.schema";
