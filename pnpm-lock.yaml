@@ -28,9 +28,6 @@ importers:
       '@olipm/contracts':
         specifier: workspace:*
         version: link:../libs/contracts
-      '@olipm/shared':
-        specifier: workspace:*
-        version: link:../libs/shared
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -161,12 +158,6 @@ importers:
         version: 6.4.3(@types/node@22.19.21)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)
 
   libs/contracts:
-    devDependencies:
-      typescript:
-        specifier: ^5.7.3
-        version: 5.9.3
-
-  libs/shared:
     devDependencies:
       typescript:
         specifier: ^5.7.3

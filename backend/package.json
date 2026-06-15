@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "pnpm --filter @olipm/contracts --filter @olipm/shared build",
+    "prebuild": "pnpm --filter @olipm/contracts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -27,7 +27,6 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.1",
     "@olipm/contracts": "workspace:*",
-    "@olipm/shared": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "pg": "^8.21.0",
