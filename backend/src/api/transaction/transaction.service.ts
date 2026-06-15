@@ -1,8 +1,9 @@
-import { performance } from "node:perf_hooks";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { ProcessTransactionsBulkResponse, TransactionResult, TransactionStatus } from "@olipm/contracts";
+import { performance } from "node:perf_hooks";
 import { Bank } from "src/common/entities/bank.entity";
-import { Transaction, TransactionStatus } from "src/common/entities/transaction.entity";
+import { Transaction } from "src/common/entities/transaction.entity";
 import { BankRepository } from "src/common/repositories/bank.repository";
 import { PersonRepository } from "src/common/repositories/person.repository";
 import { TransactionRepository } from "src/common/repositories/transaction.repository";
@@ -12,15 +13,6 @@ import { AppConfig } from "src/setup/config/config.schema";
 import { DataSource } from "typeorm";
 import { GetTransactionsDto, GetTransactionsResponseDto } from "./dto/get-transactions.dto";
 import { ProcessTransactionsBulkDto, TransactionDto } from "./dto/transaction.dto";
-
-export interface TransactionResult {
-  transactionId: number | null;
-  key: string;
-  personId: number;
-  amount: number;
-  status: TransactionStatus;
-  errorMessage: string | null;
-}
 
 const getTransactionErrorMessage = (transaction: Pick<Transaction, "errorMessage">): string | null => {
   const { errorMessage } = transaction;
@@ -43,7 +35,9 @@ export class TransactionService {
     return this.transactionRepository.find(pagination).then((res) => res.map((t) => new GetTransactionsResponseDto(t)));
   }
 
-  async processTransactionsBulk({ transactions }: ProcessTransactionsBulkDto) {
+  async processTransactionsBulk({
+    transactions,
+  }: ProcessTransactionsBulkDto): Promise<ProcessTransactionsBulkResponse> {
     const start = performance.now();
     const concurrencyLimit = this.config.get("transactions.concurrencyLimit", { infer: true });
     const ordered = transactions

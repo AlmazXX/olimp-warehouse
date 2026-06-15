@@ -1,6 +1,7 @@
+import { TransactionLogItem, TransactionStatus } from "@olipm/contracts";
 import { Type } from "class-transformer";
 import { IsInt, IsOptional, Max, Min } from "class-validator";
-import { Transaction, TransactionStatus } from "src/common/entities/transaction.entity";
+import { Transaction } from "src/common/entities/transaction.entity";
 
 export class GetTransactionsDto {
   @IsOptional()
@@ -17,14 +18,14 @@ export class GetTransactionsDto {
   limit: number = 10;
 }
 
-export class GetTransactionsResponseDto {
+export class GetTransactionsResponseDto implements TransactionLogItem {
   id: number;
   personId: number | null;
   bankId: number | null;
   amount: number;
   status: TransactionStatus;
   errorMessage: string | null;
-  createdAt: Date;
+  createdAt: string;
 
   constructor(t: Transaction) {
     this.id = t.id;
@@ -33,6 +34,6 @@ export class GetTransactionsResponseDto {
     this.amount = t.amount;
     this.status = t.status;
     this.errorMessage = t.errorMessage;
-    this.createdAt = t.createdAt;
+    this.createdAt = t.createdAt.toISOString();
   }
 }

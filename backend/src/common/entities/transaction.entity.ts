@@ -1,12 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Bank } from "./bank.entity";
 import { Person } from "./person.entity";
-
-export enum TransactionStatus {
-  PROCESSING = "PROCESSING",
-  SUCCESS = "SUCCESS",
-  FAILED = "FAILED",
-}
+import { TransactionStatus } from "@olipm/contracts";
 
 @Entity({ name: "transactions" })
 export class Transaction {

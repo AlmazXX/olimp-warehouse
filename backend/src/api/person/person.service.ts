@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Person } from "src/common/entities/person.entity";
+import { PersonResponse } from "@olipm/contracts";
 import { PersonRepository } from "src/common/repositories/person.repository";
 import { GetPersonsDto } from "./dto/get-persons.dto";
 
@@ -7,7 +7,7 @@ import { GetPersonsDto } from "./dto/get-persons.dto";
 export class PersonService {
   constructor(private readonly personRepository: PersonRepository) {}
 
-  async get(pagination: GetPersonsDto): Promise<Person[]> {
+  async get(pagination: GetPersonsDto): Promise<PersonResponse[]> {
     return this.personRepository.find(pagination);
   }
 }

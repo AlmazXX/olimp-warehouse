@@ -1,3 +1,4 @@
+import { ProcessTransactionRequest, ProcessTransactionsBulkRequest } from "@olipm/contracts";
 import { Type } from "class-transformer";
 import {
   ArrayMaxSize,
@@ -10,7 +11,7 @@ import {
   ValidateNested,
 } from "class-validator";
 
-export class TransactionDto {
+export class TransactionDto implements ProcessTransactionRequest {
   @IsInt()
   @Min(1)
   personId: number;
@@ -28,7 +29,7 @@ export class TransactionDto {
   key: string;
 }
 
-export class ProcessTransactionsBulkDto {
+export class ProcessTransactionsBulkDto implements ProcessTransactionsBulkRequest {
   @ArrayNotEmpty()
   @ArrayMaxSize(100)
   @ValidateNested({ each: true })
