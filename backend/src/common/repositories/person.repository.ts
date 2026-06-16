@@ -17,4 +17,12 @@ export class PersonRepository {
   async find({ page, limit }: { page: number; limit: number }) {
     return this.personRepo.find({ skip: (page - 1) * limit, take: limit });
   }
+
+  async count(): Promise<number> {
+    return this.personRepo.count();
+  }
+
+  async saveMany(data: Partial<Person>[]): Promise<Person[]> {
+    return this.personRepo.save(data);
+  }
 }

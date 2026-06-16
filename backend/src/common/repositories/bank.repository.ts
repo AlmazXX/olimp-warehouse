@@ -13,4 +13,12 @@ export class BankRepository {
   async findById(id: number): Promise<Bank | null> {
     return this.bankRepo.findOne({ where: { id } });
   }
+
+  async count(): Promise<number> {
+    return this.bankRepo.count();
+  }
+
+  async save(data: Partial<Bank>): Promise<Bank> {
+    return this.bankRepo.save(data);
+  }
 }
