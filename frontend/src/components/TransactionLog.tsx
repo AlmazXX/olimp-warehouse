@@ -16,7 +16,7 @@ export const TransactionLog = ({ transactions, isLoading }: Props) => (
     <div className="border-b border-gray-100 px-5 py-3">
       <h3 className="text-sm font-semibold text-gray-700">Recent transactions</h3>
     </div>
-    <div className="divide-y divide-gray-50 overflow-y-auto" style={{ maxHeight: '400px' }}>
+    <div className="divide-y divide-gray-50 overflow-y-auto max-h-[400px]">
       {isLoading && transactions.length === 0 ? (
         <div className="space-y-2 p-4">
           {Array.from({ length: 4 }).map((_, i) => (

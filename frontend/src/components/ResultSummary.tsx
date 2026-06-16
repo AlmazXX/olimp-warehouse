@@ -1,13 +1,24 @@
 import { ProcessTransactionsBulkResponse, TransactionStatus } from '@olipm/contracts';
+import { useMemo } from 'react';
 
 interface Props {
   result: ProcessTransactionsBulkResponse;
 }
 
 export const ResultSummary = ({ result }: Props) => {
-  const succeeded = result.transactions.filter(t => t.status === TransactionStatus.SUCCESS).length;
-  const failed = result.transactions.filter(t => t.status === TransactionStatus.FAILED).length;
-  const errors = result.transactions.filter(t => t.errorMessage);
+  const { succeeded, failed, errors } = useMemo(() => {
+    let succeeded = 0,
+      failed = 0,
+      errors = [];
+
+    for (const t of result.transactions) {
+      if (t.status === TransactionStatus.SUCCESS) succeeded++;
+      else if (t.status === TransactionStatus.FAILED) failed++;
+      if (t.errorMessage) errors.push(t);
+    }
+
+    return { succeeded, failed, errors };
+  }, [result.transactions]);
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -34,7 +45,7 @@ export const ResultSummary = ({ result }: Props) => {
       {errors.length > 0 && (
         <ul className="mt-3 space-y-1 border-t border-gray-100 pt-3">
           {errors.map((t, i) => (
-            <li key={i} className="truncate text-xs text-red-600">
+            <li key={t.transactionId ?? i} className="truncate text-xs text-red-600">
               #{t.transactionId ?? '—'} {t.errorMessage}
             </li>
           ))}

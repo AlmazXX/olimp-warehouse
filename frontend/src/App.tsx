@@ -25,7 +25,7 @@ const validate = (amount: string, selected: Set<number>): string | null => {
   return null;
 };
 
-export default () => {
+export default function App() {
   const [selected, setSelected] = useState(new Set<number>());
   const [amount, setAmount] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export default () => {
 
   const { data: bank, isLoading: bankLoading } = useBank();
   const { data: persons = [], isLoading: personsLoading } = usePersons();
-  const { data: transactions = [], isLoading: txLoading } = useTransactionsLog();
+  const { data: txPayload = [], isLoading: txLoading } = useTransactionsLog();
   const { mutate: sendTransactions, isPending } = useSendTransactions();
 
   const handleSend = () => {
@@ -111,9 +111,9 @@ export default () => {
         </div>
 
         <div className="mt-5 lg:mt-0">
-          <TransactionLog transactions={transactions} isLoading={txLoading} />
+          <TransactionLog transactions={txPayload} isLoading={txLoading} />
         </div>
       </main>
     </div>
   );
-};
+}

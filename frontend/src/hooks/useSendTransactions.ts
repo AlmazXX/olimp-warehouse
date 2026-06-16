@@ -7,7 +7,7 @@ export const useSendTransactions = () => {
     mutationFn: postTransactions,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bank'] });
-      void queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      void queryClient.invalidateQueries({ queryKey: ['transactions'], exact: false });
     },
   });
 };

@@ -12,12 +12,14 @@ export const BalanceCard = ({ bank, isLoading }: Props) => {
   const balance = bank?.balance.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
   useEffect(() => {
-    if (bank && prevBalance.current !== undefined && prevBalance.current !== bank.balance) {
+    const prev = prevBalance.current;
+    prevBalance.current = bank?.balance;
+
+    if (bank && prev !== undefined && prev !== bank.balance) {
       setFlash(true);
-      const t = setTimeout(() => setFlash(false), 8000);
+      const t = setTimeout(() => setFlash(false), 800);
       return () => clearTimeout(t);
     }
-    prevBalance.current = bank?.balance;
   }, [bank?.balance]);
 
   return (
