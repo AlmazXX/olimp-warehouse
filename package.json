@@ -1,5 +1,5 @@
 {
-  "name": "olipm-warehouse",
+  "name": "olimp-warehouse",
   "version": "0.0.1",
   "private": true,
   "packageManager": "pnpm@10.7.0",
@@ -11,7 +11,7 @@
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "format": "pnpm -r format",
-    "start:backend": "pnpm --filter @olipm/backend start:dev",
-    "start:frontend": "pnpm --filter @olipm/frontend dev"
+    "start:backend": "pnpm --filter @olimp/backend start:dev",
+    "start:frontend": "pnpm --filter @olimp/frontend dev"
   }
 }

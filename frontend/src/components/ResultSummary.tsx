@@ -1,4 +1,4 @@
-import { ProcessTransactionsBulkResponse, TransactionStatus } from '@olipm/contracts';
+import { ProcessTransactionsBulkResponse, TransactionStatus } from '@olimp/contracts';
 import { useMemo } from 'react';
 
 interface Props {

@@ -1,4 +1,4 @@
-import { TransactionLogItem, TransactionStatus } from '@olipm/contracts';
+import { TransactionLogItem, TransactionStatus } from '@olimp/contracts';
 
 interface Props {
   transactions: TransactionLogItem[];

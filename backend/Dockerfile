@@ -9,7 +9,7 @@ COPY libs/contracts ./libs/contracts
 COPY backend ./backend
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter @olipm/contracts build && pnpm --filter @olipm/backend build
+RUN pnpm --filter @olimp/contracts build && pnpm --filter @olimp/backend build
 
 WORKDIR /repo/backend
 

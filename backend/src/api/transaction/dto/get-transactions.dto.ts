@@ -1,4 +1,4 @@
-import { TransactionLogItem, TransactionStatus } from "@olipm/contracts";
+import { TransactionLogItem, TransactionStatus } from "@olimp/contracts";
 import { Type } from "class-transformer";
 import { IsInt, IsOptional, Max, Min } from "class-validator";
 import { Transaction } from "src/common/entities/transaction.entity";

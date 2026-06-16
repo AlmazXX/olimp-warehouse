@@ -15,7 +15,7 @@ ARG VITE_BANK_ID=1
 
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL VITE_BANK_ID=$VITE_BANK_ID
 
-RUN pnpm --filter @olipm/contracts build && pnpm --filter @olipm/frontend build
+RUN pnpm --filter @olimp/contracts build && pnpm --filter @olimp/frontend build
 
 FROM nginx:alpine
 

@@ -1,4 +1,4 @@
-import { BankResponse } from '@olipm/contracts';
+import { BankResponse } from '@olimp/contracts';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {

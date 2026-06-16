@@ -1,4 +1,4 @@
-import { ProcessTransactionRequest, ProcessTransactionsBulkRequest } from "@olipm/contracts";
+import { ProcessTransactionRequest, ProcessTransactionsBulkRequest } from "@olimp/contracts";
 import { Type } from "class-transformer";
 import {
   ArrayMaxSize,

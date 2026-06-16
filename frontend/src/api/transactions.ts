@@ -1,4 +1,4 @@
-import type { ProcessTransactionsBulkRequest, ProcessTransactionsBulkResponse, TransactionLogItem } from '@olipm/contracts';
+import type { ProcessTransactionsBulkRequest, ProcessTransactionsBulkResponse, TransactionLogItem } from '@olimp/contracts';
 import { apiGet, apiPost } from './client';
 
 export const getTransactions = (page = 1, limit = 20) =>

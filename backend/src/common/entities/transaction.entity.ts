@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Bank } from "./bank.entity";
 import { Person } from "./person.entity";
-import { TransactionStatus } from "@olipm/contracts";
+import { TransactionStatus } from "@olimp/contracts";
 
 @Entity({ name: "transactions" })
 export class Transaction {

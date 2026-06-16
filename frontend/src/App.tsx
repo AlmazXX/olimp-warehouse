@@ -1,4 +1,4 @@
-import { ProcessTransactionsBulkResponse } from '@olipm/contracts';
+import { ProcessTransactionsBulkResponse } from '@olimp/contracts';
 import { useState } from 'react';
 import { AmountInput } from './components/AmountInput';
 import { BalanceCard } from './components/BalanceCard';
@@ -65,7 +65,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
-        <h1 className="text-xl font-bold text-gray-900">OLIPM Warehouse — Transactions</h1>
+        <h1 className="text-xl font-bold text-gray-900">OLIMP Warehouse — Transactions</h1>
       </header>
 
       <main className="mx-auto max-w-5xl gap-6 p-6 lg:grid lg:grid-cols-[1fr_1.4fr]">

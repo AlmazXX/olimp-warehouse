@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ProcessTransactionsBulkResponse, TransactionResult, TransactionStatus } from "@olipm/contracts";
+import { ProcessTransactionsBulkResponse, TransactionResult, TransactionStatus } from "@olimp/contracts";
 import { performance } from "node:perf_hooks";
 import { Bank } from "src/common/entities/bank.entity";
 import { Transaction } from "src/common/entities/transaction.entity";

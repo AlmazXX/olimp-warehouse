@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PersonResponse } from "@olipm/contracts";
+import { PersonResponse } from "@olimp/contracts";
 import { PersonRepository } from "src/common/repositories/person.repository";
 import { GetPersonsDto } from "./dto/get-persons.dto";
 

@@ -1,4 +1,4 @@
-import { PersonResponse } from '@olipm/contracts';
+import { PersonResponse } from '@olimp/contracts';
 
 interface Props {
   persons: PersonResponse[];

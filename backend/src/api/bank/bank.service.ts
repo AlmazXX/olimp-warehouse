@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { BankResponse } from "@olipm/contracts";
+import { BankResponse } from "@olimp/contracts";
 import { BankRepository } from "src/common/repositories/bank.repository";
 
 @Injectable()
