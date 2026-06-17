@@ -8,6 +8,7 @@ import {
   IsNumber,
   IsString,
   Min,
+  NotEquals,
   ValidateNested,
 } from "class-validator";
 
@@ -21,7 +22,8 @@ export class TransactionDto implements ProcessTransactionRequest {
   bankId: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0.01)
+  @IsNotEmpty()
+  @NotEquals(0)
   amount: number;
 
   @IsString()

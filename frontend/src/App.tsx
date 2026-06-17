@@ -18,7 +18,7 @@ const validate = (amount: string, selected: Set<number>): string | null => {
 
   const n = Number(amount);
 
-  if (isNaN(n) || n < 0) return 'Amount must be greater than 0';
+  if (isNaN(n) || n === 0) return 'Amount must not equal 0';
   if (!Number.isFinite(n)) return 'Invalid amount';
   if (selected.size > 100) return 'Cannot send more than 100 transactions at once';
 
