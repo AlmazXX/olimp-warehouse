@@ -102,6 +102,13 @@ pnpm start:frontend  # Vite dev-server на :3000
 | `VITE_API_BASE_URL` | `http://localhost:8000` | Базовый URL бэкенда |
 | `VITE_BANK_ID` | `1` | ID банка для запросов |
 
+## Тестирование
+
+- Все тесты в монорепозитории: `pnpm test`
+- Backend e2e (проверка контрактов и batch-обработки): `pnpm test:backend:e2e`
+- Frontend unit/integration (Vitest + RTL): `pnpm test:frontend`
+- Тесты backend unit/integration (Jest): `pnpm --filter @olimp/backend test`
+
 ## Решения, принятые при разработке
 
 ### Конкурентность и защита от овердрафта

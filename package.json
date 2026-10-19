@@ -10,6 +10,8 @@
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
+    "test:backend:e2e": "pnpm --filter @olimp/backend test:e2e",
+    "test:frontend": "pnpm --filter @olimp/frontend test",
     "format": "pnpm -r format",
     "start:backend": "pnpm --filter @olimp/backend start:dev",
     "start:frontend": "pnpm --filter @olimp/frontend dev"

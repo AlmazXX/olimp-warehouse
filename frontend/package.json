@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "predev": "pnpm --filter @olimp/contracts build"
+    "predev": "pnpm --filter @olimp/contracts build",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@olimp/contracts": "workspace:*",
@@ -17,11 +19,16 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.10",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.5.2",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4.1.10",
     "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.1.9"
   }
 }

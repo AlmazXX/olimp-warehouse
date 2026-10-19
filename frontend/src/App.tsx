@@ -10,20 +10,9 @@ import { useBank } from './hooks/useBank';
 import { usePersons } from './hooks/usePersons';
 import { useSendTransactions } from './hooks/useSendTransactions';
 import { useTransactionsLog } from './hooks/useTransactionsLog';
+import { validate } from './validate';
 
 const BANK_ID = Number(import.meta.env.VITE_BANK_ID);
-
-const validate = (amount: string, selected: Set<number>): string | null => {
-  if (selected.size === 0) return 'Please select at least one person';
-
-  const n = Number(amount);
-
-  if (isNaN(n) || n === 0) return 'Amount must not equal 0';
-  if (!Number.isFinite(n)) return 'Invalid amount';
-  if (selected.size > 100) return 'Cannot send more than 100 transactions at once';
-
-  return null;
-};
 
 export default function App() {
   const [selected, setSelected] = useState(new Set<number>());
